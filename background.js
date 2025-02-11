@@ -32,11 +32,12 @@ chrome.runtime.onInstalled.addListener(() => {
       keywords: defaultKeywords,
       filterEnabled: true,
       adFilterEnabled: true,
+      nsfwFilterEnabled: false,
       loggingEnabled: true,
     },
     () => {
       console.log(
-        `Default settings set: keywords = ${defaultKeywords}, filterEnabled = true, adFilterEnabled = true, loggingEnabled = true`
+        `Default settings set: keywords = ${defaultKeywords}, filterEnabled = true, adFilterEnabled = true, nsfwFilterEnabled = false, loggingEnabled = true`
       );
     }
   );
@@ -49,11 +50,12 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
         keywords: request.keywords,
         filterEnabled: request.filterEnabled,
         adFilterEnabled: request.adFilterEnabled,
+        nsfwFilterEnabled: request.nsfwFilterEnabled,
         loggingEnabled: request.loggingEnabled,
       },
       () => {
         console.log(
-          `Settings saved: keywords = ${request.keywords}, filterEnabled = ${request.filterEnabled}, adFilterEnabled = ${request.adFilterEnabled}, loggingEnabled = ${request.loggingEnabled}`
+          `Settings saved: keywords = ${request.keywords}, filterEnabled = ${request.filterEnabled}, adFilterEnabled = ${request.adFilterEnabled}, nsfwFilterEnabled = ${request.nsfwFilterEnabled}, loggingEnabled = ${request.loggingEnabled}`
         );
         sendResponse({ status: "success" });
       }

@@ -33,9 +33,23 @@ function filterPromotedPosts() {
   });
 }
 
+function filterNSFWPosts() {
+  const posts = document.querySelectorAll("[aria-label]");
+  log(`Found ${posts.length} posts with aria-label`);
+
+  posts.forEach((post) => {
+    const subcontainer = post.querySelectorAll("[nsfw]");
+    subcontainer.forEach((container) => {
+      log(`Hiding nsfw post`);
+      post.style.display = "none";
+    });
+  });
+}
+
+// Load settings from Chrome storage and apply filters
 chrome.storage.sync.get(
-  ["keywords", "filterEnabled", "adFilterEnabled"],
-  ({ keywords, filterEnabled, adFilterEnabled }) => {
+  ["keywords", "filterEnabled", "adFilterEnabled", "nsfwFilterEnabled"],
+  ({ keywords, filterEnabled, adFilterEnabled, nsfwFilterEnabled }) => {
     if (filterEnabled && keywords) {
       log(`Keywords loaded: ${keywords}`);
       filterPosts(keywords);
@@ -47,18 +61,26 @@ chrome.storage.sync.get(
     } else {
       log("ad post filter is disabled");
     }
+    if (nsfwFilterEnabled) {
+      filterNSFWPosts();
+    } else {
+      log("NSFW post filter is disabled");
+    }
   }
 );
 
 const observer = new MutationObserver(() => {
   chrome.storage.sync.get(
-    ["keywords", "filterEnabled", "adFilterEnabled"],
-    ({ keywords, filterEnabled, adFilterEnabled }) => {
+    ["keywords", "filterEnabled", "adFilterEnabled", "nsfwFilterEnabled"],
+    ({ keywords, filterEnabled, adFilterEnabled, nsfwFilterEnabled }) => {
       if (filterEnabled && keywords) {
         filterPosts(keywords);
       }
       if (adFilterEnabled) {
         filterPromotedPosts();
+      }
+      if (nsfwFilterEnabled) {
+        filterNSFWPosts();
       }
     }
   );
